@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static junit.framework.TestCase.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -48,4 +47,15 @@ public class PalindromeTest {
 
         assertTrue(result.contains(Expression.Bonjour));
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "radar", "non", "anna" })
+    public void testGoodBye(String inputString) {
+
+        String result = CheckPalindrome.verify(inputString);
+
+        assertTrue(result.contains(Expression.AuRevoir));
+    }
+
+
 }
