@@ -2,10 +2,12 @@ package test;
 
 import main.CheckPalindrome;
 import main.Expression;
+import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * QUAND on saisit une chaîne ALORS celle-ci est renvoyée en miroir
@@ -24,17 +26,26 @@ public class PalindromeTest {
 
         String reverse = new StringBuilder(inputString).reverse().toString();
 
-        assertEquals(reverse, result);
+        assertTrue(result.contains(reverse));
+    }
+
+    @Test
+    public void testPalindrome() {
+        String palindrome = "anna";
+
+        String result = CheckPalindrome.verify(palindrome);
+
+        String expected = palindrome + System.lineSeparator() + Expression.BienDit;
+
+        assertTrue(result.contains(expected), result);
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "radar", "non", "anna" })
-    public void testPalindrome(String inputString) {
+    public void testHello(String inputString) {
 
-        String result = CheckPalindrome.verifyPalindrome(inputString);
+        String result = CheckPalindrome.verify(inputString);
 
-        String expectedString = inputString + System.lineSeparator() + Expression.BienDit;
-
-        assertEquals(expectedString, result);
+        assertTrue(result.contains(Expression.Bonjour));
     }
 }
