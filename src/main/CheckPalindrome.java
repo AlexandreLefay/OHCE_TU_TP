@@ -1,14 +1,25 @@
 package main;
 
 public class CheckPalindrome {
-    public static String verify(String inputString) {
+    private final LanguageInterface language;
 
-        String mirror = new StringBuilder(inputString).reverse().toString();
-        String greeting = Expression.Bonjour + System.lineSeparator() + Expression.AuRevoir;
+    public CheckPalindrome(LanguageInterface language) {
+        this.language = language;
+    }
 
-        if (mirror.equals(inputString)) {
-            return greeting + mirror + System.lineSeparator() + Expression.BienDit;
+    public String verify(String string) {
+        String mirror = new StringBuilder(string).reverse().toString();
+
+        StringBuilder result = new StringBuilder();
+        result.append(language.getGreeting()).append(System.lineSeparator());
+        result.append(mirror);
+
+        if (mirror.equals(string)) {
+            result.append(System.lineSeparator()).append(language.getCongrats());
         }
-        return greeting + mirror;
+
+        result.append(System.lineSeparator()).append(language.getGoodbye());
+        return result.toString();
     }
-    }
+}
+
