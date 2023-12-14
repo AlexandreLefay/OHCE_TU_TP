@@ -2,20 +2,23 @@ package test.utilities;
 
 import main.CheckPalindrome;
 import main.LanguageInterface;
+import main.Enum.MomentOfTheDay;
 
 public class CheckPalindromeBuilder {
-    private LanguageInterface language = new LangueStub();
+    private LanguageInterface language;
+    private MomentOfTheDay momentOfTheDay;
 
-    public static CheckPalindrome Default() {
-        return new CheckPalindromeBuilder().Build();
+    public CheckPalindromeBuilder(LanguageInterface language) {
+        this.language = language;
+        this.momentOfTheDay = MomentOfTheDay.MATIN; // Valeur par défaut
     }
 
-    public CheckPalindromeBuilder AyantPourLangue(LanguageInterface language){
-        this.language = language;
+    public CheckPalindromeBuilder avecMomentDeLaJournee(MomentOfTheDay momentOfTheDay) {
+        this.momentOfTheDay = momentOfTheDay;
         return this;
     }
 
-    public CheckPalindrome Build() {
-        return new CheckPalindrome(this.language);
+    public CheckPalindrome build() {
+        return new CheckPalindrome(this.language, this.momentOfTheDay);
     }
 }

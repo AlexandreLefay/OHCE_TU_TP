@@ -1,21 +1,35 @@
 package main;
 
+import main.Enum.Language;
+import main.Enum.MomentOfTheDay;
+
+import static main.Enum.Greetings.*;
+import static main.Enum.Language.FRENCH;
+
 public class FrLanguage implements LanguageInterface {
     @Override
     public String getCongrats() {
-        return Expression.Felicitations;
+        return getCongratsByLanguageAndTime(FRENCH);
     }
 
+    @Override
+    public String getGreeting(MomentOfTheDay time) {
+        return getGreetingByLanguageAndTime(FRENCH, time);
+    }
+
+    @Override
     public String getGreeting() {
-        return Expression.Bonjour;
+        return null;
     }
 
-    public String getGoodbye() {
-        return Expression.AuRevoir;
+    @Override
+    public String getGoodbye(MomentOfTheDay time) {
+        return getGoodByeByLanguageAndTime(FRENCH, time);
     }
 
+    @Override
     public String getWellSaid() {
-        return Expression.BienDit;
+        return getConfirmPalindrom(FRENCH);
     }
 
     @Override
