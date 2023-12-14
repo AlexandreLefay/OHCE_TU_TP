@@ -13,7 +13,7 @@ public class CheckPalindromeBuilder {
         this.momentOfTheDay = MomentOfTheDay.MATIN; // Valeur par défaut
     }
 
-    public CheckPalindromeBuilder avecMomentDeLaJournee(MomentOfTheDay momentOfTheDay) {
+    public CheckPalindromeBuilder withMomentOfTheDay(MomentOfTheDay momentOfTheDay) {
         this.momentOfTheDay = momentOfTheDay;
         return this;
     }

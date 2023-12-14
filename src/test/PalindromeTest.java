@@ -6,10 +6,16 @@ import main.Enum.Greetings;
 import main.Enum.Language;
 import main.Enum.MomentOfTheDay;
 import main.FrLanguage;
+import main.LanguageInterface;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import test.utilities.CheckPalindromeBuilder;
+
+import java.util.stream.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -39,8 +45,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * ALORS <auRevoir> dans cette langue est envoyé en dernier
  */
 
-/**
+/** ETAPE 3 - IN PROGRESS
  *
+ * On poursuit en complexifiant, grâce aux builders qui permettent d’ajouter des cas de manière indolore.
+ *
+ * ETANT DONNE un utilisateur parlant une langue
+ * ET que la période de la journée est <période>
+ * QUAND on saisit une chaîne ALORS <salutation> de cette langue à cette période est envoyé avant tout
+ * CAS {‘matin’, ‘bonjour_am’}
+ * CAS {‘après-midi’, ‘bonjour_pm’} CAS {‘soirée’, ‘bonjour_soir’}
+ * CAS {‘nuit’, ‘bonjour_nuit’}
+ *
+ * ETANT DONNE un utilisateur parlant une langue
+ * ET que la période de la journée est <période>
+ * QUAND on saisit une chaîne ALORS <auRevoir> dans cette langue à cette période est envoyé en dernier
+ * CAS {‘matin’, ‘auRevoir_am’}
+ * CAS {‘après-midi’, ‘auRevoir _pm’}
+ * CAS {‘soirée’, ‘auRevoir _soir’}
+ * CAS {‘nuit’, ‘auRevoir _nuit’}
  *
  */
 public class PalindromeTest {
@@ -49,7 +71,7 @@ public class PalindromeTest {
     @ValueSource(strings = { "radar", "non", "test", "epsi" })
     public void testMirror(String inputString) {
         CheckPalindrome checker = new CheckPalindromeBuilder(new FrLanguage())
-                .avecMomentDeLaJournee(MomentOfTheDay.MATIN)
+                .withMomentOfTheDay(MomentOfTheDay.MATIN)
                 .build();
         String result = checker.verify(inputString);
 
@@ -60,7 +82,7 @@ public class PalindromeTest {
     @Test
     public void testFrenchPalindrome() {
         CheckPalindrome checker = new CheckPalindromeBuilder(new FrLanguage())
-                .avecMomentDeLaJournee(MomentOfTheDay.MATIN)
+                .withMomentOfTheDay(MomentOfTheDay.MATIN)
                 .build();
         String palindrome = "radar";
         String result = checker.verify(palindrome);
@@ -78,24 +100,37 @@ public class PalindromeTest {
         assertTrue(result.endsWith(expectedEnd));
     }
 
+    // Méthode fournissant les données pour les tests
+    static Stream<Arguments> fournirCasPourSalutationsMatinales() {
+        return Stream.of(
+                Arguments.of("radar", new FrLanguage(), MomentOfTheDay.MATIN),
+                Arguments.of("non", new FrLanguage(), MomentOfTheDay.MATIN),
+                Arguments.of("anna", new FrLanguage(), MomentOfTheDay.MATIN),
+                Arguments.of("radar", new EnLanguage(), MomentOfTheDay.MATIN),
+                Arguments.of("non", new EnLanguage(), MomentOfTheDay.MATIN),
+                Arguments.of("anna", new EnLanguage(), MomentOfTheDay.MATIN)
+        );
+    }
+
     @ParameterizedTest
-    @ValueSource(strings = { "radar", "non", "anna" })
-    public void testHelloAtTheBeginningInFrench(String inputString) {
-        CheckPalindrome checker = new CheckPalindromeBuilder(new FrLanguage())
-                .avecMomentDeLaJournee(MomentOfTheDay.MATIN)
+    @MethodSource("fournirCasPourSalutationsMatinales")
+    public void testHelloAtTheBeginning(String inputString, LanguageInterface language, MomentOfTheDay moment) {
+        CheckPalindrome checker = new CheckPalindromeBuilder(language)
+                .withMomentOfTheDay(moment)
                 .build();
         String result = checker.verify(inputString);
 
-        String expected = Greetings.getGreetingByLanguageAndTime(Language.FRENCH, MomentOfTheDay.MATIN);
+        String expected = Greetings.getGreetingByLanguageAndTime(Language.FRENCH, moment);
 
         assertTrue(result.startsWith(expected));
     }
+
 
     @ParameterizedTest
     @ValueSource(strings = { "radar", "non", "anna" })
     public void testGoodbyeInFrench(String inputString) {
         CheckPalindrome checker = new CheckPalindromeBuilder(new FrLanguage())
-                .avecMomentDeLaJournee(MomentOfTheDay.MATIN)
+                .withMomentOfTheDay(MomentOfTheDay.MATIN)
                 .build();
         String result = checker.verify(inputString);
 
@@ -107,7 +142,7 @@ public class PalindromeTest {
     @Test
     public void testMorningGreetingInEnglish() {
         CheckPalindrome checker = new CheckPalindromeBuilder(new EnLanguage())
-                .avecMomentDeLaJournee(MomentOfTheDay.MATIN)
+                .withMomentOfTheDay(MomentOfTheDay.MATIN)
                 .build();
         String palindrome = "radar";
         String result = checker.verify(palindrome);
