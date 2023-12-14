@@ -114,13 +114,13 @@ public class PalindromeTest {
 
     @ParameterizedTest
     @MethodSource("fournirCasPourSalutationsMatinales")
-    public void testHelloAtTheBeginning(String inputString, LanguageInterface language, MomentOfTheDay moment) {
+    public void testHelloAtTheBeginningWithTheCorrectLanguage(String inputString, LanguageInterface language, MomentOfTheDay moment) {
         CheckPalindrome checker = new CheckPalindromeBuilder(language)
                 .withMomentOfTheDay(moment)
                 .build();
         String result = checker.verify(inputString);
 
-        String expected = Greetings.getGreetingByLanguageAndTime(Language.FRENCH, moment);
+        String expected = Greetings.getGreetingByLanguageAndTime(language.getLanguageEnum(), moment);
 
         assertTrue(result.startsWith(expected));
     }

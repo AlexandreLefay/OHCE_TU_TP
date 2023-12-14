@@ -33,6 +33,11 @@ public class FrLanguage implements LanguageInterface {
     }
 
     @Override
+    public Language getLanguageEnum() {
+        return Language.FRENCH;
+    }
+
+    @Override
     public String toString() {
         return "Langue Française";
     }

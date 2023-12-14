@@ -33,6 +33,11 @@ public class EnLanguage implements LanguageInterface {
     }
 
     @Override
+    public Language getLanguageEnum() {
+        return Language.ENGLISH;
+    }
+
+    @Override
     public String toString() {
         return "English language";
     }

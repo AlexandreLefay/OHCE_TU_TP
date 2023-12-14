@@ -1,9 +1,17 @@
 package test.utilities;
 
+import main.Enum.Language;
 import main.Enum.MomentOfTheDay;
 import main.LanguageInterface;
 
 public class LangueStub implements LanguageInterface {
+
+    private Language language;
+
+    public LangueStub(Language language) {
+        this.language = language;
+    }
+
     @Override
     public String getCongrats() {
         return "Stubbed Congrats";
@@ -27,5 +35,10 @@ public class LangueStub implements LanguageInterface {
     @Override
     public String getWellSaid() {
         return "Stubbed Well Said";
+    }
+
+    @Override
+    public Language getLanguageEnum() {
+        return language;
     }
 }
