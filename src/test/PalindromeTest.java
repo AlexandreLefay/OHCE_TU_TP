@@ -8,7 +8,6 @@ import main.Enum.MomentOfTheDay;
 import main.FrLanguage;
 import main.LanguageInterface;
 import org.junit.Test;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -17,6 +16,7 @@ import test.utilities.CheckPalindromeBuilder;
 
 import java.util.stream.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -27,25 +27,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * QUAND on saisit une chaîne ALORS «Bonjour» est envoyé avant toute réponse
  * QUAND on saisit une chaîne ALORS «Au revoir» est envoyé en dernier
  * /
-
-
- /** ETAPE 2 - DONE
- *
+ * <p>
+ * <p>
+ * /** ETAPE 2 - DONE
+ * <p>
  * ETANT DONNE un utilisateur parlant une langue
  * QUAND on entre un palindrome
  * ALORS il est renvoyé
  * ET le <bienDit> de cette langue est envoyé
- *
+ * <p>
  * ETANT DONNE un utilisateur parlant une langue
  * QUAND on saisit une chaîne
  * ALORS <bonjour> de cette langue est envoyé avant tout
- *
+ * <p>
  * ETANT DONNE un utilisateur parlant une langue
  * QUAND on saisit une chaîne
  * ALORS <auRevoir> dans cette langue est envoyé en dernier
  */
 
-/** ETAPE 3 - IN PROGRESS
+/** ETAPE 3 - DONE
  *
  * On poursuit en complexifiant, grâce aux builders qui permettent d’ajouter des cas de manière indolore.
  *
@@ -53,7 +53,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * ET que la période de la journée est <période>
  * QUAND on saisit une chaîne ALORS <salutation> de cette langue à cette période est envoyé avant tout
  * CAS {‘matin’, ‘bonjour_am’}
- * CAS {‘après-midi’, ‘bonjour_pm’} CAS {‘soirée’, ‘bonjour_soir’}
+ * CAS {‘après-midi’, ‘bonjour_pm’}
+ * CAS {‘soirée’, ‘bonjour_soir’}
  * CAS {‘nuit’, ‘bonjour_nuit’}
  *
  * ETANT DONNE un utilisateur parlant une langue
@@ -101,19 +102,21 @@ public class PalindromeTest {
     }
 
     // Méthode fournissant les données pour les tests
-    static Stream<Arguments> fournirCasPourSalutationsMatinales() {
+    static Stream<Arguments> fournirCasPourSalutations() {
         return Stream.of(
                 Arguments.of("radar", new FrLanguage(), MomentOfTheDay.MATIN),
-                Arguments.of("non", new FrLanguage(), MomentOfTheDay.MATIN),
-                Arguments.of("anna", new FrLanguage(), MomentOfTheDay.MATIN),
+                Arguments.of("non", new FrLanguage(), MomentOfTheDay.APRES_MIDI),
+                Arguments.of("anna", new FrLanguage(), MomentOfTheDay.SOIREE),
+                Arguments.of("anna", new FrLanguage(), MomentOfTheDay.NUIT),
                 Arguments.of("radar", new EnLanguage(), MomentOfTheDay.MATIN),
-                Arguments.of("non", new EnLanguage(), MomentOfTheDay.MATIN),
-                Arguments.of("anna", new EnLanguage(), MomentOfTheDay.MATIN)
+                Arguments.of("non", new EnLanguage(), MomentOfTheDay.APRES_MIDI),
+                Arguments.of("anna", new EnLanguage(), MomentOfTheDay.SOIREE),
+                Arguments.of("anna", new EnLanguage(), MomentOfTheDay.NUIT)
         );
     }
 
     @ParameterizedTest
-    @MethodSource("fournirCasPourSalutationsMatinales")
+    @MethodSource("fournirCasPourSalutations")
     public void testHelloAtTheBeginningWithTheCorrectLanguage(String inputString, LanguageInterface language, MomentOfTheDay moment) {
         CheckPalindrome checker = new CheckPalindromeBuilder(language)
                 .withMomentOfTheDay(moment)
@@ -125,16 +128,28 @@ public class PalindromeTest {
         assertTrue(result.startsWith(expected));
     }
 
-
+    // Méthode fournissant les données pour les tests
+    static Stream<Arguments> fournirCasPourAuRevoir() {
+        return Stream.of(
+                Arguments.of("radar", new FrLanguage(), MomentOfTheDay.MATIN),
+                Arguments.of("non", new FrLanguage(), MomentOfTheDay.APRES_MIDI),
+                Arguments.of("anna", new FrLanguage(), MomentOfTheDay.SOIREE),
+                Arguments.of("anna", new FrLanguage(), MomentOfTheDay.NUIT),
+                Arguments.of("radar", new EnLanguage(), MomentOfTheDay.MATIN),
+                Arguments.of("non", new EnLanguage(), MomentOfTheDay.APRES_MIDI),
+                Arguments.of("anna", new EnLanguage(), MomentOfTheDay.SOIREE),
+                Arguments.of("anna", new EnLanguage(), MomentOfTheDay.NUIT)
+        );
+    }
     @ParameterizedTest
-    @ValueSource(strings = { "radar", "non", "anna" })
-    public void testGoodbyeInFrench(String inputString) {
-        CheckPalindrome checker = new CheckPalindromeBuilder(new FrLanguage())
-                .withMomentOfTheDay(MomentOfTheDay.MATIN)
+    @MethodSource("fournirCasPourAuRevoir")
+    public void testGoodbyeWithTheCorrectLanguage(String inputString, LanguageInterface language, MomentOfTheDay moment) {
+        CheckPalindrome checker = new CheckPalindromeBuilder(language)
+                .withMomentOfTheDay(moment)
                 .build();
         String result = checker.verify(inputString);
 
-        String expected = Greetings.getGoodByeByLanguageAndTime(Language.FRENCH, MomentOfTheDay.MATIN);
+        String expected = Greetings.getGoodByeByLanguageAndTime(language.getLanguageEnum(), moment);
 
         assertTrue(result.endsWith(expected));
     }
