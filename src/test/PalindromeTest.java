@@ -14,9 +14,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import test.utilities.CheckPalindromeBuilder;
 
-import java.util.stream.*;
+import java.time.LocalTime;
+import java.util.Locale;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static main.CheckPalindrome.determineMomentOfTheDay;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -43,6 +45,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * ETANT DONNE un utilisateur parlant une langue
  * QUAND on saisit une chaîne
  * ALORS <auRevoir> dans cette langue est envoyé en dernier
+ * ETAPE 3 - DONE
+ * <p>
+ * On poursuit en complexifiant, grâce aux builders qui permettent d’ajouter des cas de manière indolore.
+ * <p>
+ * ETANT DONNE un utilisateur parlant une langue
+ * ET que la période de la journée est <période>
+ * QUAND on saisit une chaîne ALORS <salutation> de cette langue à cette période est envoyé avant tout
+ * CAS {‘matin’, ‘bonjour_am’}
+ * CAS {‘après-midi’, ‘bonjour_pm’}
+ * CAS {‘soirée’, ‘bonjour_soir’}
+ * CAS {‘nuit’, ‘bonjour_nuit’}
+ * <p>
+ * ETANT DONNE un utilisateur parlant une langue
+ * ET que la période de la journée est <période>
+ * QUAND on saisit une chaîne ALORS <auRevoir> dans cette langue à cette période est envoyé en dernier
+ * CAS {‘matin’, ‘auRevoir_am’}
+ * CAS {‘après-midi’, ‘auRevoir _pm’}
+ * CAS {‘soirée’, ‘auRevoir _soir’}
+ * CAS {‘nuit’, ‘auRevoir _nuit’}
  */
 
 /** ETAPE 3 - DONE
@@ -66,10 +87,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * CAS {‘nuit’, ‘auRevoir _nuit’}
  *
  */
+
+/** ETAPE 4 - IN PROGRESS
+ *
+ * Reliez La langue à celle du système
+ * Le moment de la journée à l’horloge
+ * L’entrée et la sortie à la console
+ *
+ * Les tests d’intégration sont des points bonus.
+ *
+ * Il n’y a pas de saut de ligne final après le dernier output. Rédigez
+ * un test de défaut
+ */
 public class PalindromeTest {
 
+    private LanguageInterface getSystemLanguage() {
+        Locale locale = Locale.getDefault();
+        return locale.getLanguage().equals(new Locale("fr").getLanguage()) ? new FrLanguage() : new EnLanguage();
+    }
+
     @ParameterizedTest
-    @ValueSource(strings = { "radar", "non", "test", "epsi" })
+    @ValueSource(strings = {"radar", "non", "test", "epsi"})
     public void testMirror(String inputString) {
         CheckPalindrome checker = new CheckPalindromeBuilder(new FrLanguage())
                 .withMomentOfTheDay(MomentOfTheDay.MATIN)
@@ -141,6 +179,7 @@ public class PalindromeTest {
                 Arguments.of("anna", new EnLanguage(), MomentOfTheDay.NUIT)
         );
     }
+
     @ParameterizedTest
     @MethodSource("fournirCasPourAuRevoir")
     public void testGoodbyeWithTheCorrectLanguage(String inputString, LanguageInterface language, MomentOfTheDay moment) {
@@ -166,4 +205,36 @@ public class PalindromeTest {
 
         assertTrue(result.startsWith(expectedStart));
     }
+
+    @Test
+    public void testSystemLanguageAndTime() {
+        LanguageInterface systemLanguage = getSystemLanguage();
+        MomentOfTheDay systemMoment = determineMomentOfTheDay(LocalTime.now());
+        CheckPalindrome checker = new CheckPalindrome(systemLanguage, systemMoment);
+
+        String inputString = "radar";
+        String result = checker.verify(inputString);
+
+        String expectedStart = Greetings.getGreetingByLanguageAndTime(systemLanguage.getLanguageEnum(), systemMoment);
+        String expectedEnd = Greetings.getGoodByeByLanguageAndTime(systemLanguage.getLanguageEnum(), systemMoment);
+
+        assertTrue(result.startsWith(expectedStart));
+        assertTrue(result.endsWith(expectedEnd));
+    }
+
+    @Test
+    public void testNoFinalNewLine() {
+        LanguageInterface systemLanguage = getSystemLanguage();
+        MomentOfTheDay systemMoment = determineMomentOfTheDay(LocalTime.now());
+        CheckPalindrome checker = new CheckPalindrome(systemLanguage, systemMoment);
+
+        String inputString = "radar";
+        String result = checker.verify(inputString);
+
+        // Check que le dernier caractère n'est pas un saut de ligne
+        char lastChar = result.charAt(result.length() - 1);
+        boolean hasNoFinalNewLine = lastChar != '\n' && lastChar != '\r';
+        assertTrue(hasNoFinalNewLine, "Le dernier caractère ne devrait pas être un saut de ligne");
+    }
+
 }
