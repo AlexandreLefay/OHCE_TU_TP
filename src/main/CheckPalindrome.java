@@ -3,14 +3,19 @@ package main;
 import main.Enum.MomentOfTheDay;
 
 import java.time.LocalTime;
+import java.util.Locale;
 
 public class CheckPalindrome {
     private final LanguageInterface language;
-    private MomentOfTheDay momentOfTheDay; // Ajoutez un champ pour stocker le moment de la journée
+    private final MomentOfTheDay momentOfTheDay; // Ajoutez un champ pour stocker le moment de la journée
 
     public CheckPalindrome(LanguageInterface language, MomentOfTheDay momentOfTheDay) {
         this.language = language;
         this.momentOfTheDay = momentOfTheDay; // Stockez le moment de la journée passé au constructeur
+    }
+    public static LanguageInterface getSystemLanguage() {
+        Locale locale = Locale.getDefault();
+        return locale.getLanguage().equals(new Locale("fr").getLanguage()) ? new FrLanguage() : new EnLanguage();
     }
 
     public String verify(String string) {

@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.stream.Stream;
 
 import static main.CheckPalindrome.determineMomentOfTheDay;
+import static main.CheckPalindrome.getSystemLanguage;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -88,7 +89,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  */
 
-/** ETAPE 4 - IN PROGRESS
+/** ETAPE 4 - DONE
  *
  * Reliez La langue à celle du système
  * Le moment de la journée à l’horloge
@@ -100,11 +101,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * un test de défaut
  */
 public class PalindromeTest {
-
-    private LanguageInterface getSystemLanguage() {
-        Locale locale = Locale.getDefault();
-        return locale.getLanguage().equals(new Locale("fr").getLanguage()) ? new FrLanguage() : new EnLanguage();
-    }
 
     @ParameterizedTest
     @ValueSource(strings = {"radar", "non", "test", "epsi"})

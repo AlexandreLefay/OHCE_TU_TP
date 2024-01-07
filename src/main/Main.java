@@ -23,6 +23,6 @@ public class Main {
 
         String result = checker.verify(inputString);
 
-        System.out.println(result);
+        System.out.print(result);
     }
 }
